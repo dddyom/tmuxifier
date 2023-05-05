@@ -26,6 +26,7 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
+session_root="$2"
 layout_name="$1"
 layout_file="$TMUXIFIER_LAYOUT_PATH/${layout_name}.session.sh"
 template="$TMUXIFIER/templates/session.sh"
@@ -43,8 +44,16 @@ if [ -f "$layout_file" ]; then
   exit 1
 fi
 
-content="$(cat "$template")"
-echo "${content//\{\{SESSION_NAME\}\}/$layout_name}" > "$layout_file"
+
+template_content=$(cat "$template")
+layout_name_regex="{{SESSION_NAME}}"
+session_root_regex="{{SESSION_ROOT}}"
+
+template_content=${template_content//$layout_name_regex/$layout_name}
+template_content=${template_content//$session_root_regex/$session_root}
+
+echo "$template_content" > "$layout_file"
+
 
 if [ -n "$EDITOR" ]; then
   exec $EDITOR "$layout_file"
