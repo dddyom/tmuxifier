@@ -31,7 +31,7 @@ load_session_layout() {
 }
 
 session_root=$(get_session_root $(find $HOME | fzf))
-session_name=$(get_session_name $session_root)
+session_name=$(echo "$(get_session_name $session_root)" | tr -d '.')
 layout_file="$TMUXIFIER_LAYOUT_PATH/$session_name.session.sh"
 
 if [[ ! -f "$layout_file" ]]; then
