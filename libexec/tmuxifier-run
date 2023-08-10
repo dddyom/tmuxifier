@@ -30,13 +30,16 @@ load_session_layout() {
   tmuxifier load-session "$session_name"
 }
 
-session_root=$(get_session_root $(find $HOME | fzf))
-session_name=$(echo "$(get_session_name $session_root)" | tr -d '.')
-layout_file="$TMUXIFIER_LAYOUT_PATH/$session_name.session.sh"
+fzf_res=$(find $HOME | fzf)
+if [[ ! -z $fzf_res ]]; then
+  session_root=$(get_session_root $fzf_res)
+  session_name=$(echo "$(get_session_name $session_root)" | tr -d '.')
+  layout_file="$TMUXIFIER_LAYOUT_PATH/$session_name.session.sh"
 
-if [[ ! -f "$layout_file" ]]; then
-  tmuxifier new-session $session_name $session_root
-  load_session_layout 0
-else
-  load_session_layout 1
+  if [[ ! -f "$layout_file" ]]; then
+    tmuxifier new-session $session_name $session_root
+    load_session_layout 0
+  else
+    load_session_layout 1
+  fi
 fi
